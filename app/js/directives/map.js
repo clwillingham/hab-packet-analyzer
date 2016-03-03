@@ -22,6 +22,14 @@ Vue.directive('map', {
         //    this.map.panTo(newVal);
         //    this.centered = true;
         //}
+        if(oldVal && newVal) {
+            console.log(oldVal, newVal);
+            var distance = Math.sqrt(Math.pow(newVal[0] - oldVal[0], 2) + Math.pow(newVal[1] - oldVal[1], 2));
+            if(distance > 1){
+                this.map.panTo(newVal);
+            }
+            console.log("distance to new point: ", distance);
+        }
         this.marker.setLatLng(newVal);
     },
     unbind: function(){
