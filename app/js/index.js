@@ -2,6 +2,8 @@
  * Created by chris on 1/3/16.
  */
 var SP = require('serialport');
+var crypt = require('crypto');
+var crc = require('crc');
 var serialPort = new SP.SerialPort('/dev/ttyUSB0', {
     baudrate: 115200,
     parser:SP.parsers.readline('\r\n')
@@ -26,6 +28,7 @@ var app = new Vue({
     },
     ready: function(){
         var self = this;
+        console.log(crypt);
         $.couch.urlPrefix = "http://habitat.habhub.org";
         window.db = $.couch.db("habitat");
         serialPort.on('data', function(rawData){
@@ -61,21 +64,30 @@ var app = new Vue({
                 self.timefix = packet.msg.timefix;
                 self.altitude = packet.msg.altitude;
                 self.id = packet.msg.id;
-                self.rssi = packet.rssi
-                habHubPacket = {
+                self.rssi = packet.rssi;
+                var _rawData = 'ALCHAB1,'+
+                        packet.msg.id+','+
+                        packet.msg.timefix.format('HH:mm:ss')+','+
+                        packet.msg.latitude.toFixed(4)+','+
+                        packet.msg.longitude.toFixed(4)+','+
+                        packet.msg.altitude;
+                _rawData += ('*'+crc.crc16ccitt(_rawData).toString(16));
+                _rawData = '$$'+_rawData+'\n';
+                _rawData = btoa(_rawData);
+                habHubPacket = { //EXAMPLE: http://habitat.habhub.org/monocle/?uri=habitat/da1346dc230ce8b5d01b992dc6e0bafe5bbacecb0d83a27cf9e7699055515a0b
+                    _id: crypt.createHash('sha256').update(_rawData).digest('hex'),
                     type: 'payload_telemetry',
                     data: {
-                        _raw: btoa(
-                            '$$ALCHAB1,'+
-                                packet.msg.id+','+
-                                packet.msg.timefix.format('HH:mm:ss')+','+
-                                packet.msg.latitude+','+
-                                packet.msg.longitude+','+
-                                packet.msg.altitude
-                            )/*,
-                        latitude: self.latitude,
-                        longitude: self.longitude,
-                        altitude: self.altitude*/
+                        _raw: _rawData/*,
+                        _fallbacks: {
+                            payload: 'ALCHAB1'
+                        }*/
+                    },
+                    receivers: {
+                        imsp_chase_car: {
+                            time_created: moment().format("YYYY-MM-DDTHH:mm:ssZ"),
+                            time_uploaded: moment().format("YYYY-MM-DDTHH:mm:ssZ")
+                        }
                     }
                 };
                 db.saveDoc(habHubPacket, {
@@ -86,7 +98,7 @@ var app = new Vue({
                         console.log('error', result);
                     }
                 });
-                console.log(habHubPacket);
+                console.log(habHubPacket, 'raw:', atob(habHubPacket.data._raw));
             }
         });
     }
