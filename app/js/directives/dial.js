@@ -19,9 +19,10 @@ Vue.directive('dial', {
         $(this.el).highcharts(this.chart = {
                 chart: {
                     type: 'gauge',
-                    plotBackgroundColor: null,
+                    backgroundColor: 'transparent',
                     plotBackgroundImage: null,
                     plotBorderWidth: 0,
+                    borderRadius: 12,
                     plotShadow: false
                 },
 

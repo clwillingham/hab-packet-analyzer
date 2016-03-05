@@ -11,6 +11,12 @@ Vue.directive('map', {
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        //L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+        //    maxZoom: 20,
+        //    subdomains:['mt0','mt1','mt2','mt3']
+        //}).addTo(map);
+
         var marker = L.marker([0,0]).addTo(map);
 
 
