@@ -4,6 +4,16 @@
 var SP = require('serialport');
 var crypt = require('crypto');
 var crc = require('crc');
+var fs = require('fs');
+var Console = require('console').Console;
+
+var output = fs.createWriteStream('./LoRa.log', {
+    flags: 'a'
+});
+var errorOutput = fs.createWriteStream('./LoRaErr.log', {
+    flags: 'a'
+});
+var logger = new Console(output, errorOutput);
 var serialPort = new SP.SerialPort('/dev/ttyUSB0', {
     baudrate: 115200,
     parser:SP.parsers.readline('\r\n')
@@ -12,9 +22,9 @@ var serialPort = new SP.SerialPort('/dev/ttyUSB0', {
 $(window).on('resize', handleResize);
 
 function handleResize(){
-
+    $('#app').height($(window).height())
 }
-
+handleResize();
 
 var app = new Vue({
     el: '#app',
@@ -28,26 +38,16 @@ var app = new Vue({
     },
     ready: function(){
         var self = this;
-        console.log(crypt);
         $.couch.urlPrefix = "http://habitat.habhub.org";
         window.db = $.couch.db("habitat");
         serialPort.on('data', function(rawData){
             var data = rawData.split(';');
+            logger.log(rawData);
             console.log(data);
             if(data[0] == '#r'){
                 var rssi = parseInt(data[1]);
                 var habHubPacket;
                 var msg = data[2].split(',');
-                //var packet = {
-                //    rssi: rssi,
-                //    msg: {
-                //        timefix: parseInt(msg[0]),
-                //        latitude: parseInt(msg[1].substr(1, 2))+(parseFloat(msg[1].substr(3))/60),
-                //        longitude: -parseInt(msg[2].substr(1, 2))-(parseFloat(msg[2].substr(3))/60),
-                //        altitude: parseFloat(msg[3])*3.28084,
-                //        id: parseInt(msg[4])
-                //    }
-                //};
                 var packet = {
                     rssi: rssi,
                     msg: {
@@ -84,22 +84,25 @@ var app = new Vue({
                         }*/
                     },
                     receivers: {
-                        imsp_chase_car: {
+                        ALCHAB1_chase: {
                             time_created: moment().format("YYYY-MM-DDTHH:mm:ssZ"),
                             time_uploaded: moment().format("YYYY-MM-DDTHH:mm:ssZ")
                         }
                     }
                 };
-                db.saveDoc(habHubPacket, {
-                    success: function(result){
-                        console.log(result);
-                    },
-                    error: function(result){
-                        console.log('error', result);
-                    }
-                });
+                //db.saveDoc(habHubPacket, {
+                //    success: function(result){
+                //        console.log(result);
+                //    },
+                //    error: function(result){
+                //        console.log('error', result);
+                //    }
+                //});
                 console.log(habHubPacket, 'raw:', atob(habHubPacket.data._raw));
             }
         });
+    },
+    beforeDestroy: function(){
+        serialPort.close();
     }
 });

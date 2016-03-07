@@ -14,26 +14,29 @@
 
     <script src="js/directives/dial.js"></script>
     <script src="js/directives/map.js"></script>
+    <script src="js/directives/line-chart.js"></script>
 
     <script src="node_modules/highcharts/highcharts.js"></script>
     <script src="node_modules/highcharts/highcharts-more.js"></script>
+    <script src="node_modules/highcharts/themes/dark-unica.js"></script>
     <script src="libs/jquery.couch.js"></script>
 </head>
 <body>
 <div class="container-fluid " id="app">
     <div class="col-md-9">
         <div class="display">
-            <div style="height: 300px" id="map" v-map="[latitude, longitude]"></div>
+            <div style="height: 350px" id="map" v-map="[latitude, longitude]"></div>
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-6">
                 <div class="display">
-                    <div style="height: 250px" v-dial="altitude" title="Altitude" max="150000" units="ft" greenend="80000" yellowend="108000"></div>
+                    <div style="height: 250px;" v-line-chart="altitude" title="Altitude" yAxis="Altitude(ft)"></div>
+                    <!--<div style="height: 250px" v-dial="altitude" title="Altitude" max="150000" units="ft" greenend="80000" yellowend="108000"></div>-->
                 </div>
             </div>
             <div class="col-md-6 col-sm-6">
                 <div class="display">
-                    <div v-dial="rssi" style="height: 250px"
+                    <!--<div v-dial="rssi" style="height: 250px"
                          title="Signal Strength"
                          min="-200"
                          max="0"
@@ -44,6 +47,8 @@
                          yellowend="-40"
                          redstart="-200"
                          redend="-100">
+                    </div>-->
+                    <div v-line-chart="rssi" style="height: 250px" title="Signal Strength" yAxis="Signal Strength (Db)">
                     </div>
                 </div>
 
