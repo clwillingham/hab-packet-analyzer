@@ -7,6 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nw"
   },
+  "window": {
+    "fullscreen": true,
+    "width": 1600,
+    "height": 900,
+    "toolbar": false
+  },
   "author": "Chris Willingham",
   "license": "ISC",
   "dependencies": {
