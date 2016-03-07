@@ -8,7 +8,7 @@ body {
     box-sizing: border-box;
     background-color: #BEC6BE;/*rgb(196,202,196)*/;
     background-image: linear-gradient(to bottom,rgb(188,196,188),rgb(200,208,200),rgb(188,196,188));
-    padding: 20px;
+    padding: 5px;
     border-radius: 10px;
     box-shadow: 0px 1px 2px 0.5px rgba(0, 0, 0, 0.5);
     margin: 10px;
