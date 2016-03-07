@@ -23,7 +23,7 @@
 </head>
 <body>
 <div class="container-fluid " id="app">
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div class="display">
             <div style="height: 350px" id="map" v-map="[latitude, longitude]"></div>
         </div>
@@ -55,9 +55,9 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <pre>{{$data | json 2}}</pre>
-    </div>
+    <!--<div class="col-md-3">-->
+        <!--<pre>{{$data | json 2}}</pre>-->
+    <!--</div>-->
 </div>
 
 <script src="js/index.js"></script>
